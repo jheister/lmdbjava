@@ -197,6 +197,11 @@ final class Library {
 
   }
 
+  public interface MDB_msg_func {
+    @Delegate
+    int f(@In Pointer msg, @In Pointer ctx);
+  }
+
   /**
    * JNR API for MDB-defined C functions. Not for external use.
    */
@@ -243,6 +248,8 @@ final class Library {
     int mdb_env_get_flags(@In Pointer env, int flags);
 
     int mdb_env_get_maxkeysize(@In Pointer env);
+
+    int mdb_reader_list(@In Pointer env, MDB_msg_func func, Pointer ctx);
 
     int mdb_env_get_maxreaders(@In Pointer env, int readers);
 

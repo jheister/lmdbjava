@@ -392,6 +392,15 @@ public final class Env<T> implements AutoCloseable {
     return ptr;
   }
 
+  public List<String> readerList() {
+    List<String> result = new ArrayList<>();
+    LIB.mdb_reader_list(ptr, (msg, ctx) -> {
+      result.add(msg.getString(0));
+      return 0;
+    }, null);
+    return result;
+  }
+
   /**
    * Object has already been closed and the operation is therefore prohibited.
    */

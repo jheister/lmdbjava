@@ -48,6 +48,8 @@ import static org.lmdbjava.EnvFlags.MDB_RDONLY_ENV;
 import static org.lmdbjava.TestUtils.DB_1;
 import static org.lmdbjava.TestUtils.bb;
 import org.lmdbjava.Txn.BadReaderLockException;
+import java.util.List;
+import org.hamcrest.Matchers;
 
 /**
  * Test {@link Env}.
@@ -377,4 +379,17 @@ public final class EnvTest {
     }
   }
 
+  @Test
+  public void listsReaders() throws IOException {
+    final File path = tmp.newFolder();
+    try (Env<ByteBuffer> env = open(path, 10)) {
+      assertThat(env.readerList(), Matchers.contains("(no active readers)\n"));
+
+      try (Txn<ByteBuffer> txn = env.txnRead()) {
+        List<String> readers = env.readerList();
+        assertThat(readers, Matchers.hasSize(2));
+        assertThat(readers, Matchers.hasItem("    pid     thread     txnid\n"));
+      }
+    }
+  }
 }
